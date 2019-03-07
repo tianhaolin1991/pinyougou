@@ -30,4 +30,7 @@ app.service('brandService', function ($http) {
         return $http.get('../brand/findOne.do?id=' + id);
     }
 
+    this.findOptionList = function(){
+        return $http.get('../brand/findOptionList.do');
+    }
 });

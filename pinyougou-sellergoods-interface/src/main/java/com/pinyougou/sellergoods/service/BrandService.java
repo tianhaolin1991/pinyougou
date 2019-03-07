@@ -1,9 +1,10 @@
 package com.pinyougou.sellergoods.service;
 
-import com.github.pagehelper.PageInfo;
 import com.pinyougou.pojo.TbBrand;
+import entity.PageResult;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BrandService {
 
@@ -17,7 +18,7 @@ public interface BrandService {
      * 分页查询
      * @return
      */
-    PageInfo findPage(Integer pageNum, Integer pageSize);
+    PageResult findPage(Integer pageNum, Integer pageSize);
 
     /**
      * 新增品牌
@@ -51,5 +52,12 @@ public interface BrandService {
      * @param pageSize
      * @return
      */
-    PageInfo findPage(TbBrand tbBrand, Integer pageNum, Integer pageSize);
+    PageResult findPage(TbBrand tbBrand, Integer pageNum, Integer pageSize);
+
+
+    /**
+     * TypeTemplate商品类型模板编辑选项
+     * @return
+     */
+    List<Map> findOptionList();
 }

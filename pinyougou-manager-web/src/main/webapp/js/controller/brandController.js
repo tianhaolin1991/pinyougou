@@ -6,7 +6,7 @@ app.controller('brandController', function ($controller,$scope, brandService) {
     $scope.search = function (pageNum, pageSize) {
         brandService.search(pageNum, pageSize, $scope.searchEntity).success(
             function (response) {
-                $scope.list = response.list;
+                $scope.list = response.rows;
                 $scope.paginationConf.totalItems = response.total;
             }
         )
@@ -51,5 +51,6 @@ app.controller('brandController', function ($controller,$scope, brandService) {
             }
         )
     };
+
 
 })
