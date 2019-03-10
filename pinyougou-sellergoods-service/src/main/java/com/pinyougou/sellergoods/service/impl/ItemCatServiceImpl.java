@@ -65,7 +65,8 @@ public class ItemCatServiceImpl implements ItemCatService {
 	 */
 	@Override
 	public TbItemCat findOne(Long id){
-		return itemCatMapper.selectByPrimaryKey(id);
+
+	    return itemCatMapper.selectByPrimaryKey(id);
 	}
 
 	/**
@@ -74,7 +75,11 @@ public class ItemCatServiceImpl implements ItemCatService {
 	@Override
 	public void delete(Long[] ids) {
 		for(Long id:ids){
-			itemCatMapper.deleteByPrimaryKey(id);
+            List<TbItemCat> ItemCats = findItemsByParentId(id);
+            if(ItemCats!=null&&ItemCats.size()!=0){
+                continue;
+            }
+            itemCatMapper.deleteByPrimaryKey(id);
 		}		
 	}
 	
@@ -96,5 +101,15 @@ public class ItemCatServiceImpl implements ItemCatService {
 		Page<TbItemCat> page= (Page<TbItemCat>)itemCatMapper.selectByExample(example);		
 		return new PageResult(page.getTotal(), page.getResult());
 	}
-	
+
+	@Override
+	public List<TbItemCat> findItemsByParentId(Long parentId) {
+		TbItemCatExample example = new TbItemCatExample();
+        Criteria criteria = example.createCriteria();
+        criteria.andParentIdEqualTo(parentId);
+
+        List<TbItemCat> tbItemCats = itemCatMapper.selectByExample(example);
+        return tbItemCats;
+    }
+
 }

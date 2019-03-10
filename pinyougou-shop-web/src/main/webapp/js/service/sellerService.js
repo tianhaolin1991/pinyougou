@@ -34,6 +34,4 @@ app.service('sellerService',function($http){
 		return $http.post('/seller/add.do',seller);
 	}
 	
-
-	
 });

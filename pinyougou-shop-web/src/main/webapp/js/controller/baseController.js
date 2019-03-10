@@ -37,4 +37,14 @@ app.controller('baseController', function ($scope) {
         }
         return value;
     }
+	
+	//遍历数组的属性(key),看该属性是否存在于数组中,常用于查看一个json格式的字符串中是否有某个'属性'
+	$scope.searchObjectByKey = function(list,key,value){
+		for(var i = 0 ; i<list.length; i++){
+			if(list[i][key] == value){
+				return list[i];
+			}
+		}
+		return null;
+	}
 })

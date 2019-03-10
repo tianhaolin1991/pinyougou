@@ -1,14 +1,19 @@
 package com.pinyougou.sellergoods.service.impl;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+
+import com.pinyougou.mapper.*;
+import com.pinyougou.pojo.*;
+import com.pinyougou.pojogroup.GoodsGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.pinyougou.mapper.TbGoodsMapper;
-import com.pinyougou.pojo.TbGoods;
-import com.pinyougou.pojo.TbGoodsExample;
 import com.pinyougou.pojo.TbGoodsExample.Criteria;
 import com.pinyougou.sellergoods.service.GoodsService;
+import com.alibaba.fastjson.JSON;
 
 import entity.PageResult;
 
@@ -22,7 +27,18 @@ public class GoodsServiceImpl implements GoodsService {
 
 	@Autowired
 	private TbGoodsMapper goodsMapper;
-	
+
+	@Autowired
+	private TbGoodsDescMapper goodsDescMapper;
+
+	@Autowired
+	private TbSellerMapper sellerMapper;
+
+	@Autowired
+	private TbBrandMapper tbBrandMapper;
+
+	@Autowired
+	private TbItemMapper itemMapper;
 	/**
 	 * 查询全部
 	 */
@@ -45,8 +61,88 @@ public class GoodsServiceImpl implements GoodsService {
 	 * 增加
 	 */
 	@Override
-	public void add(TbGoods goods) {
-		goodsMapper.insert(goods);		
+	public void add(GoodsGroup goodsGroup) {
+		TbGoods tbGoods = goodsGroup.getTbGoods();
+		//将状态变为未审核
+		tbGoods.setAuditStatus("0");
+		goodsMapper.insert(tbGoods);
+		//从商品基本表获取goodsId
+		Long goodsId = tbGoods.getId();
+		TbGoodsDesc tbGoodsDesc = goodsGroup.getTbGoodsDesc();
+		tbGoodsDesc.setGoodsId(goodsId);
+		goodsDescMapper.insert(tbGoodsDesc);
+
+		//设置tbItems
+		List<TbItem> items = goodsGroup.getTbItems();
+		//获取SPU
+		String spu = tbGoods.getGoodsName();
+		//获取第一张图片
+		String itemImages = tbGoodsDesc.getItemImages();
+		List<Map> imgMaps = JSON.parseArray(itemImages, Map.class);
+		String url = "{}";
+		if(imgMaps.size()>0){
+			url = (String)imgMaps.get(0).get("url");
+		}
+		//创建时间与update时间
+		Date createTime = new Date();
+		//获取商家名称
+		TbSeller tbSeller = sellerMapper.selectByPrimaryKey(tbGoods.getSellerId());
+		String nickName = tbSeller.getNickName();
+		//获取品牌名称
+		String brand = tbBrandMapper.selectByPrimaryKey(tbGoods.getBrandId()).getName();
+		if("1".equals(tbGoods.getIsEnableSpec())){
+			for (TbItem item : items) {
+				//设置title
+				String title = spu;
+				String spec = item.getSpec();
+				Map<String,Object> specMap =  JSON.parseObject(spec);
+				for (String specKey : specMap.keySet()) {
+					title += " " + specKey;
+				}
+				//设置图片
+				item.setImage(url);
+				//设置分类id
+				item.setCategoryid(tbGoods.getCategory3Id());
+				//设置createTime,updateTime
+				item.setCreateTime(createTime);
+				item.setUpdateTime(createTime);
+				//设置goodsId
+				item.setGoodsId(tbGoods.getId());
+				//设置seller
+				item.setSeller(nickName);
+				//设置brand
+				item.setBrand(brand);
+
+				itemMapper.insert(item);
+			}
+		}else{
+
+			TbItem item = new TbItem();
+			//设置title
+			item.setTitle(spu);
+			//设置图片
+			item.setImage(url);
+			item.setCategoryid(tbGoods.getCategory3Id());
+			//设置createTime,updateTime
+			item.setCreateTime(createTime);
+			item.setUpdateTime(createTime);
+			//设置goodsId
+			item.setGoodsId(tbGoods.getId());
+			//设置seller
+			item.setSeller(nickName);
+			//设置brand
+			item.setBrand(brand);
+			//设置status
+			item.setStatus("1");
+			//设置是否默认
+			item.setIsDefault("1");
+			//设置库存
+			item.setNum(99999);
+			//设置spec
+			item.setSpec("{}");
+			itemMapper.insert(item);
+		}
+
 	}
 
 	

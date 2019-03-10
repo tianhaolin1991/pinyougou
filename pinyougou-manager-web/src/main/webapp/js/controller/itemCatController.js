@@ -37,13 +37,14 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 		if($scope.entity.id!=null){//如果有ID
 			serviceObject=itemCatService.update( $scope.entity ); //修改  
 		}else{
+			$scope.entity.parentId = $scope.parentId;
 			serviceObject=itemCatService.add( $scope.entity  );//增加 
 		}				
 		serviceObject.success(
 			function(response){
 				if(response.success){
 					//重新查询 
-		        	$scope.reloadList();//重新加载
+		        	$scope.findItemsByParentId($scope.parentId);//重新加载
 				}else{
 					alert(response.message);
 				}
@@ -58,7 +59,7 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 		itemCatService.dele( $scope.selectIds ).success(
 			function(response){
 				if(response.success){
-					$scope.reloadList();//刷新列表
+					$scope.findItemsByParentId($scope.parentId);//刷新列表
 					$scope.selectIds=[];
 				}						
 			}		
@@ -76,5 +77,38 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 			}			
 		);
 	}
+	
+	//按parentId查询item category
+	$scope.findItemsByParentId = function(parentId){
+		itemCatService.findItemsByParentId(parentId).success(
+			function(response){
+				$scope.list = response;
+			}
+		)
+	}
+	
+	//实现面包屑
+	$scope.grade=1;
+	$scope.updateGrade = function(grade){
+		$scope.grade = grade;
+	}
+	$scope.navigate = function(entity){
+		var grade = $scope.grade;
+		if(grade == 1){
+			$scope.entity_1 = null;
+			$scope.entity_2 = null;
+		}else if(grade == 2){
+			$scope.entity_1 = entity;
+			$scope.entity_2 = null;
+		}else{
+			$scope.entity_1 = $scope.entity_1;
+			$scope.entity_2 = entity;
+		}
+	    
+		$scope.findItemsByParentId(entity.id);
+		$scope.parentId = entity.id;
+	}
+	
+	$scope.parentId = 0;
     
 });	

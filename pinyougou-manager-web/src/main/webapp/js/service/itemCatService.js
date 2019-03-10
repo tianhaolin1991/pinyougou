@@ -15,7 +15,7 @@ app.service('itemCatService',function($http){
 	}
 	//增加 
 	this.add=function(entity){
-		return  $http.post('../itemCat/add.do',entity );
+		return  $http.post('../itemCat/add.do',entity);
 	}
 	//修改 
 	this.update=function(entity){
@@ -29,4 +29,9 @@ app.service('itemCatService',function($http){
 	this.search=function(page,rows,searchEntity){
 		return $http.post('../itemCat/search.do?page='+page+"&rows="+rows, searchEntity);
 	}    	
+	
+	this.findItemsByParentId=function(parentId){
+		return $http.get('../itemCat/findItemsByParentId.do?parentId=' + parentId);
+	}
+	
 });

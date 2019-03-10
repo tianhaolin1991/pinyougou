@@ -4,7 +4,6 @@ app.controller('indexController',function($scope,loginService){
 		loginService.getUsername().success(
 			function(response){
 				$scope.username = response.username;
-			
 			}
 		);
 		
