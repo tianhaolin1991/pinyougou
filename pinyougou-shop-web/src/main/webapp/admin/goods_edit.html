@@ -23,10 +23,10 @@
 
 		<script src="../plugins/angularjs/angular.min.js"></script>
 		<script src="../js/base.js"></script>
-		<script src="../js/service/goodsService.js"></script>
 		<script src="../js/service/fileService.js"></script>
 		<script src="../js/service/itemCatService.js"></script>
 		<script src="../js/service/typeTemplateService.js"></script>
+		<script src="../js/service/goodsService.js"></script>
 		<script src="../js/controller/baseController.js"></script>
 		<script src="../js/controller/goodsController.js"></script>
 
@@ -34,7 +34,7 @@
 
 	</head>
 
-	<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="goodsController" ng-init="findItemsByParentId()">
+	<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="goodsController" ng-init="findItemsByParentId();findOne()">
 
 		<!-- 正文区域 -->
 		<section class="content">
@@ -59,9 +59,7 @@
 							<a href="#spec" data-toggle="tab">规格</a>
 						</li>
 						<li>
-							 goods.tbGoodsDesc.specificationItems:{{goods.tbGoodsDesc.specificationItems}}<br/>
-							 goods.tbItems:{{goods.tbItems}}
-							 goods.tbGoods.isEnableSpec:{{goods.tbGoods.isEnableSpec}}
+							{{goods.tbGoodsDesc.specificationItems}}
 							<!-- img_entity:{{img_entity}}<br/>
 							 grade1List:{{grade1List}}<br/>
 							 grade2List:{{grade2List}}<br/>
@@ -170,7 +168,7 @@
 												{{pojo.color}}
 											</td>
 											<td>
-												<img alt="" src="{{pojo.url}}" width="100px" height="100px">
+												<img alt="" ng-src="{{pojo.url}}" width="100px" height="100px">
 											</td>
 											<td> <button type="button" class="btn btn-default" title="删除" ng-click="spliceImgList($index)">
 												<i class="fa fa-trash-o"></i> 删除</button>
@@ -214,7 +212,11 @@
 											<div class="col-md-10 data">
 
 												<span ng-repeat="item in pojo.options">
-													<input type="checkbox" ng-click="updateSpecItem($event,pojo.text,item.optionName);createItemList()">{{item.optionName}}
+										
+													  <input type="checkbox" 
+													  ng-click="updateSpecItem($event,pojo.text,item.optionName);createItemList()"
+													  ng-checked="checkOption(pojo.text,item.optionName)">{{item.optionName}}
+													
 												</span>
 												
 
@@ -310,7 +312,7 @@
 												</button>
 											</td>
 											<td>
-												<img src="{{img_entity.url}}" width="200px" height="200px">
+												<img ng-src="{{img_entity.url}}" width="200px" height="200px">
 											</td>
 										</tr>
 									</table>

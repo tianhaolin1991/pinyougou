@@ -152,16 +152,30 @@ public class GoodsServiceImpl implements GoodsService {
 	@Override
 	public void update(TbGoods goods){
 		goodsMapper.updateByPrimaryKey(goods);
-	}	
-	
+	}
+
 	/**
 	 * 根据ID获取实体
 	 * @param id
 	 * @return
 	 */
 	@Override
-	public TbGoods findOne(Long id){
-		return goodsMapper.selectByPrimaryKey(id);
+	public GoodsGroup findOne(Long id){
+		GoodsGroup goodsGroup = new GoodsGroup();
+		//查询goods
+		TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
+		goodsGroup.setTbGoods(tbGoods);
+		//查询goodsDesc
+		TbGoodsDesc tbGoodsDesc = goodsDescMapper.selectByPrimaryKey(id);
+		goodsGroup.setTbGoodsDesc(tbGoodsDesc);
+		//查询Item
+		Long categoryId = tbGoods.getCategory3Id();
+		TbItemExample example = new TbItemExample();
+		TbItemExample.Criteria criteria = example.createCriteria();
+		criteria.andCategoryidEqualTo(categoryId);
+		List<TbItem> itemList = itemMapper.selectByExample(example);
+		goodsGroup.setTbItems(itemList);
+		return goodsGroup;
 	}
 
 	/**
@@ -183,8 +197,8 @@ public class GoodsServiceImpl implements GoodsService {
 		Criteria criteria = example.createCriteria();
 		
 		if(goods!=null){			
-						if(goods.getSellerId()!=null && goods.getSellerId().length()>0){
-				criteria.andSellerIdLike("%"+goods.getSellerId()+"%");
+			if(goods.getSellerId()!=null && goods.getSellerId().length()>0){
+				criteria.andSellerIdEqualTo(goods.getSellerId());
 			}
 			if(goods.getGoodsName()!=null && goods.getGoodsName().length()>0){
 				criteria.andGoodsNameLike("%"+goods.getGoodsName()+"%");

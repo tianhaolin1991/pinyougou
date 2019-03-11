@@ -2,10 +2,8 @@ package com.pinyougou.shop.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.pojo.TbGoods;
-import com.pinyougou.pojo.TbItemCat;
 import com.pinyougou.pojogroup.GoodsGroup;
 import com.pinyougou.sellergoods.service.GoodsService;
-import com.pinyougou.sellergoods.service.ItemCatService;
 import entity.PageResult;
 import entity.Result;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -87,8 +85,9 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/findOne")
-	public TbGoods findOne(Long id){
-		return goodsService.findOne(id);		
+	public GoodsGroup findOne(Long id){
+
+		return goodsService.findOne(id);
 	}
 	
 	/**
@@ -115,7 +114,9 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/search")
-	public PageResult search(@RequestBody TbGoods goods, int page, int rows  ){
+	public PageResult search(@RequestBody TbGoods goods, int page, int rows ){
+		String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
+		goods.setSellerId(sellerId);
 		return goodsService.findPage(goods, page, rows);		
 	}
 

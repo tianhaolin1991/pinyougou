@@ -1,6 +1,7 @@
 package com.pinyougou.shop.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojo.TbItemCat;
 import com.pinyougou.sellergoods.service.ItemCatService;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +27,10 @@ public class ItemCatController {
     @RequestMapping("/findItemsByParentId")
     public List<TbItemCat> findItemsByParentId(Long parentId){
         return itemCatService.findItemsByParentId(parentId);
+    }
+
+    @RequestMapping("/findAll")
+    public List<TbItemCat> findAll(){
+        return itemCatService.findAll();
     }
 }

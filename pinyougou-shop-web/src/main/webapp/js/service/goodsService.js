@@ -30,4 +30,5 @@ app.service('goodsService',function($http){
 		return $http.post('../goods/search.do?page='+page+"&rows="+rows, searchEntity);
 	}    	
 
+
 });

@@ -1,5 +1,5 @@
 //控制层 
- app.controller('goodsController', function($scope, $controller, goodsService, fileService , itemCatService,typeTemplateService) {
+ app.controller('goodsController', function($scope, $controller,$location,goodsService, fileService , itemCatService,typeTemplateService) {
 
  	$controller('baseController', {
  		$scope: $scope
@@ -25,10 +25,18 @@
  	}
 
  	//查询实体 
- 	$scope.findOne = function(id) {
+ 	$scope.findOne = function() {
+		var id = $location.search()['id'];
  		goodsService.findOne(id).success(
  			function(response) {
- 				$scope.entity = response;
+				$scope.goods = response;
+				editor.html(response.tbGoodsDesc.introduction);
+				$scope.goods.tbGoodsDesc.itemImages = JSON.parse($scope.goods.tbGoodsDesc.itemImages);
+				$scope.typeTemplate.customAttribute = JSON.parse($scope.goods.tbGoodsDesc.customAttributeItems);
+				$scope.goods.tbGoodsDesc.specificationItems = JSON.parse($scope.goods.tbGoodsDesc.specificationItems);
+				for(var i =0 ; i < $scope.goods.tbItems.length; i++){
+					$scope.goods.tbItems[i].spec = JSON.parse($scope.goods.tbItems[i].spec)
+				}
  			}
  		);
  	}
@@ -80,6 +88,18 @@
  			}
  		);
  	}
+	
+	//为category设置名称
+	$scope.categoryList = [];
+	$scope.findItemsCatList = function(){
+		itemCatService.findAll().success(
+			function(response){
+				for(var i=0;i<response.length;i++){
+					$scope.categoryList[response[i].id] = response[i].name;
+				}
+			}
+		)
+	}
 
 	//$scope.img_entity={};
  	$scope.upload = function() {
@@ -93,7 +113,7 @@
 		})
  	}
 
-	$scope.goods = {tbGoods:{},tbGoodsDesc:{itemImages:[],specificationItems:[]}};
+	$scope.goods = {tbGoods:{},tbGoodsDesc:{itemImages:[],specificationItems:[],tbItems:[]}};
 	$scope.updateImgList= function(){
 		$scope.goods.tbGoodsDesc.itemImages.push({color:$scope.img_entity.color,url:$scope.img_entity.url});
 	}
@@ -117,6 +137,7 @@
 			}
 		)
 	}
+	
 	$scope.$watch('goods.tbGoods.category1Id',function(newValue,oldValue){
 		
 		itemCatService.findItemsByParentId(newValue).success(
@@ -144,7 +165,9 @@
 				function(data){
 					$scope.typeTemplate.brandIds = JSON.parse(data.brandIds);
 					if(data.customAttributeItems){
-						$scope.typeTemplate.customAttribute = JSON.parse(data.customAttributeItems);
+						if($location.search()['id']==null){
+							$scope.typeTemplate.customAttribute = JSON.parse(data.customAttributeItems);
+						}
 					}
 				}
 			)
@@ -201,5 +224,19 @@
 			}
 		}
 		return newList;
+	}
+	
+	$scope.checkOption = function(specName,optionName){
+		var object = $scope.searchObjectByKey($scope.goods.tbGoodsDesc.specificationItems,"attributeName",specName);
+		//alert(JSON.stringify(object))
+		if(object !=null){
+			if(object.attributeValue.indexOf(optionName)>=0){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			return false;
+		}
 	}
  });
