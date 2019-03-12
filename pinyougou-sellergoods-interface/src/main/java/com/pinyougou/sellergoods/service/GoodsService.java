@@ -35,19 +35,12 @@ public interface GoodsService {
 	/**
 	 * 修改
 	 */
-	public void update(TbGoods goods);
-	
+	public void update(GoodsGroup goodsGroup);
 
-	/**
-	 * 根据ID获取实体
-	 * @param id
-	 * @return
-	 */
-	public GoodsGroup findOne(Long id);
 	
 	
 	/**
-	 * 批量删除
+	 * 批量删除(修改状态)
 	 * @param ids
 	 */
 	public void delete(Long[] ids);
@@ -60,4 +53,16 @@ public interface GoodsService {
 	 */
 	public PageResult findPage(TbGoods goods, int pageNum, int pageSize);
 
+	/**
+	 * 根据商品的id来获取商品的全部信息
+	 * @return
+	 */
+	GoodsGroup findOne(Long id);
+
+	/**
+	 * 修改商品的status,1为审核通过,2为驳回
+	 * @param ids
+	 * @param status
+	 */
+	void updateStatus(Long[] ids, String status);
 }

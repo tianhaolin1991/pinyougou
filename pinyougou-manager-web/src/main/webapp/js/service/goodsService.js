@@ -22,11 +22,19 @@ app.service('goodsService',function($http){
 		return  $http.post('../goods/update.do',entity );
 	}
 	//删除
-	this.dele=function(ids){
+	this.del=function(ids){
 		return $http.get('../goods/delete.do?ids='+ids);
 	}
 	//搜索
 	this.search=function(page,rows,searchEntity){
 		return $http.post('../goods/search.do?page='+page+"&rows="+rows, searchEntity);
-	}    	
+	}
+	//审核
+	this.checked=function(ids){
+		return $http.get('../goods/checked.do?ids='+ ids);
+	}
+	//驳回
+    this.rollBack=function(ids){
+        return $http.get('../goods/rollBack.do?ids='+ ids);
+    }
 });

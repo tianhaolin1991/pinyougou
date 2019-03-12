@@ -49,7 +49,7 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/update")
-	public Result update(@RequestBody TbGoods goods){
+	public Result update(@RequestBody GoodsGroup goods){
 		try {
 			goodsService.update(goods);
 			return new Result(true, "修改成功");
@@ -57,15 +57,35 @@ public class GoodsController {
 			e.printStackTrace();
 			return new Result(false, "修改失败");
 		}
-	}	
-	
+	}
+
+	@RequestMapping("/checked")
+	public Result checked(Long[] ids){
+		try {
+			goodsService.updateStatus(ids,"1");
+			return new Result(true, "审核成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result(false, "审核失败");
+		}
+	}
+	@RequestMapping("/rollBack")
+	public Result rollBack(Long[] ids){
+		try {
+			goodsService.updateStatus(ids,"2");
+			return new Result(true, "驳回成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result(false, "驳回失败");
+		}
+	}
 	/**
 	 * 获取实体
 	 * @param id
 	 * @return
 	 */
 	@RequestMapping("/findOne")
-	public TbGoods findOne(Long id){
+	public GoodsGroup findOne(Long id){
 		return goodsService.findOne(id);		
 	}
 	
