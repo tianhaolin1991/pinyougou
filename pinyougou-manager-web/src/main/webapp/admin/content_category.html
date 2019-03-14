@@ -12,11 +12,19 @@
     <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
     <link rel="stylesheet" href="../css/style.css">
 	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
-    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+	<script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+	
+	<script src="../plugins/angularjs/angular.min.js"></script>
+	<script src="../js/base.js"></script>
+	<script src="../js/service/contentCategoryService.js"></script>
+	<script src="../js/controller/baseController.js"></script>
+	<script src="../js/controller/contentCategoryController.js"></script>
+	
+
     
 </head>
 
-<body class="hold-transition skin-red sidebar-mini"  >
+<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="contentCategoryController" ng-init="findAll()">
   <!-- .box-body -->
                 
                     <div class="box-header with-border">
@@ -63,10 +71,10 @@
 			                          </tr>
 			                      </thead>
 			                      <tbody>
-			                          <tr>
+			                          <tr ng-repeat="item in list">
 			                              <td><input  type="checkbox" ></td>			                              
-				                          <td>1</td>
-									      <td>首页轮播广告</td>
+				                          <td>{{item.id}}</td>
+									      <td>{{item.name}}</td>
 									      <td>首页广告</td>
 									      <td>index</td>
 		                                  <td>

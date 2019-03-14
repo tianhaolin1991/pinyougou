@@ -51,7 +51,7 @@
 									</div>
 								</div>
 								<div class="logined">
-								<a class="sui-btn btn-block btn-xlarge btn-danger" onclick="document:loginform.submit()" target="_blank">登&nbsp;&nbsp;录</a>
+								<a class="sui-btn btn-block btn-xlarge btn-danger" id="login" onclick="document:loginform.submit()" target="_blank">登&nbsp;&nbsp;录</a>
 								</div>
 						</form>
 					</div>
@@ -92,7 +92,14 @@
 				// alert("验证成功,即将跳转至首页");
             	// window.location.href="index.html"
         	});
-        slider.init();
+		slider.init();
+		
+		//回车提交事件
+		$("body").bind('keydown', function(event) { 
+				if(event.keyCode==13){ 
+					$("#loginform").submit();
+				}   
+			}); 
 	})
 	</script>
 </body>

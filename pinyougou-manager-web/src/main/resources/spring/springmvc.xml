@@ -23,6 +23,10 @@
 	  </mvc:message-converters>  
 	</mvc:annotation-driven>
 
+	<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="multipartResolver">
+		<property name="maxInMemorySize" value="5242880"/>
+	</bean>
+
 	<mvc:default-servlet-handler/>
 
 	<!-- 引用dubbo 服务 -->
