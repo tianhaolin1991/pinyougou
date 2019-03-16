@@ -30,11 +30,8 @@ app.service('goodsService',function($http){
 		return $http.post('../goods/search.do?page='+page+"&rows="+rows, searchEntity);
 	}
 	//审核
-	this.checked=function(ids){
-		return $http.get('../goods/checked.do?ids='+ ids);
+	this.updateStatus=function(ids,status){
+		return $http.get('../goods/updateStatus.do?ids='+ids+'&status='+ status);
 	}
-	//驳回
-    this.rollBack=function(ids){
-        return $http.get('../goods/rollBack.do?ids='+ ids);
-    }
+
 });

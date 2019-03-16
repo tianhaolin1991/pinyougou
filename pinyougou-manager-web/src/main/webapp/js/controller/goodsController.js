@@ -152,8 +152,8 @@ app.controller('goodsController', function ($scope, $controller,$location, goods
             )
         }
 
-    $scope.checked = function(){
-        goodsService.checked($scope.selectIds).success(
+    $scope.updateStatus = function(status){
+        goodsService.updateStatus($scope.selectIds,status).success(
             function(response){
                 if(response.success){
                     $scope.reloadList();

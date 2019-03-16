@@ -1,7 +1,10 @@
 package com.pinyougou.manager.controller;
+import java.util.Arrays;
 import java.util.List;
 
+import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojogroup.GoodsGroup;
+import com.pinyougou.search.service.ItemSearchService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +25,9 @@ public class GoodsController {
 
 	@Reference
 	private GoodsService goodsService;
+
+	@Reference
+	private ItemSearchService searchService;
 	
 	/**
 	 * 返回全部列表
@@ -59,26 +65,21 @@ public class GoodsController {
 		}
 	}
 
-	@RequestMapping("/checked")
-	public Result checked(Long[] ids){
+	@RequestMapping("/updateStatus")
+	public Result checked(Long[] ids,String status){
 		try {
-			goodsService.updateStatus(ids,"1");
-			return new Result(true, "审核成功");
+			goodsService.updateStatus(ids,status);
+			if("1".equals(status)){
+				List<TbItem> itemList = goodsService.findItemListByGoodsIdListAndStatus(ids, status);
+				searchService.importList(itemList);
+			}
+			return new Result(true, "执行成功");
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new Result(false, "审核失败");
+			return new Result(false, "执行失败");
 		}
 	}
-	@RequestMapping("/rollBack")
-	public Result rollBack(Long[] ids){
-		try {
-			goodsService.updateStatus(ids,"2");
-			return new Result(true, "驳回成功");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new Result(false, "驳回失败");
-		}
-	}
+
 	/**
 	 * 获取实体
 	 * @param id
@@ -98,6 +99,7 @@ public class GoodsController {
 	public Result delete(Long [] ids){
 		try {
 			goodsService.delete(ids);
+			searchService.deleteByGoodsIds(Arrays.asList(ids));
 			return new Result(true, "删除成功"); 
 		} catch (Exception e) {
 			e.printStackTrace();
