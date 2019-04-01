@@ -1,61 +1,72 @@
-app.controller('pageController',function($scope){
+app.controller('pageController',function($scope,$http){
 
-    $scope.itemNum = 1;
-    $scope.specification = {};
-    $scope.item = itemList[0];
-
-    //动态增减商品
-    $scope.addItemNum = function(){
-        $scope.itemNum = $scope.itemNum + 1;
-    }
-    $scope.minusItemNum = function(){
-        if($scope.itemNum>1){
-            $scope.itemNum = $scope.itemNum - 1;
+    $scope.spec = {};
+    $scope.initSpec = function(){
+        if(itemList.length>0){
+            $scope.item = itemList[0];
+            $scope.spec = JSON.parse(JSON.stringify($scope.item.spec));
         }
     }
-
-    //动态选择商品
-    $scope.updateSpecification = function(attributeName,attributeValue){
-        $scope.specification[attributeName] = attributeValue;
-        findCurrentSKU();
+    $scope.selectSpec = function (name,value){
+        $scope.spec[name] = value;
     }
 
     $scope.isSelected = function(name,value){
-        if($scope.specification[name]==value){
+        if($scope.spec[name]==value){
             return true;
+        }else{
+            return false;
         }
-        return false;
     }
 
-    isEqual = function(map1,map2){
-        for(key in map1){
-            if(map1[key] != map2[key]){
+    $scope.updateSpecification=function(name,value){
+        $scope.spec[name]=value;
+        $scope.searchItem();//读取sku
+    }
+
+    $scope.num = 1;
+    $scope.updateNum = function(value){
+        if(value==-1&&$scope.num<=0){
+            $scope.num = $scope.num;
+        }else{
+            $scope.num += value;
+        }
+    }
+
+    //判断选择的item
+    $scope.searchItem = function(){
+        for(i=0;i<itemList.length;i++){
+            if(matchObject(itemList[i].spec,$scope.spec)){
+                $scope.item = itemList[i];
+                return;
+            }
+        }
+        $scope.item={id:0,title:'--------',price:0};//如果没有匹配的
+    }
+
+    matchObject=function(map1,map2){
+        for(var k in map1){
+            if(map1[k]!=map2[k]){
                 return false;
             }
         }
-        for(key in map2){
-            if(map2[key]!=map1[key]){
+        for(var k in map2){
+            if(map2[k]!=map1[k]){
                 return false;
             }
         }
         return true;
     }
 
-    findCurrentSKU = function(){
-        for(var i = 0; i< itemList.length;i++){
-            if(isEqual(itemList[i].spec,$scope.specification)){
-                $scope.item = itemList[i];
-                return;
-            }
-        }
-        return $scope.item={id:0,title:'--------',price:0};//如果没有匹配的	
-    }
-
-    $scope.load = function(){
-        $scope.specification = JSON.parse(JSON.stringify($scope.item.spec));
-    }
-
     $scope.addToCart = function(){
-        alert('item.id:'+ $scope.item.id);
+        $http.get('http://localhost:9107/cart/addItemToCartList.do?itemId='+$scope.item.id+'&num='+$scope.num,{'withCredentials':true})
+            .success(
+                function(response){
+                    if(!response.success){
+                        alert(response.message);
+                    }
+                }
+            )
     }
+
 })

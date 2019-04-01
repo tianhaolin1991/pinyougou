@@ -6,8 +6,14 @@ public interface ItemPageService  {
 
     /**
      * 根据goodsId来生成页面
-     * @param goodsId
+     * @param goodsIds
      * @return
      */
-    boolean genItemPage(Long goodsId);
+    boolean genItemPage(Long[] goodsIds);
+
+    /**
+     * 根据goodsIds删除页面
+     * @param goodsIds
+     */
+    void deleteItemPage(Long[] goodsIds);
 }

@@ -134,4 +134,9 @@ public class ItemServiceImpl implements ItemService {
 		return new PageResult(page.getTotal(), page.getResult());
 	}
 
+	@Override
+	public Integer updateResp() {
+		return null;
+	}
+
 }

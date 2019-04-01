@@ -88,13 +88,13 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
     from tb_order_item
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from tb_order_item
     where id = #{id,jdbcType=BIGINT}
   </delete>
@@ -287,4 +287,10 @@
       seller_id = #{sellerId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <!--根据OrderId查找OrderItemList-->
+  <select id="findByOrderId" parameterType="String" resultMap="BaseResultMap">
+     SELECT <include refid="Base_Column_List"/>
+     FROM tb_order_item WHERE order_id = #{id}
+  </select>
 </mapper>

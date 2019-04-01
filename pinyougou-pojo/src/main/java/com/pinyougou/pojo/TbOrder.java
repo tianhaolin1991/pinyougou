@@ -3,9 +3,10 @@ package com.pinyougou.pojo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class TbOrder implements Serializable {
-    private Long orderId;
+    private String orderId;
 
     private BigDecimal payment;
 
@@ -55,11 +56,22 @@ public class TbOrder implements Serializable {
 
     private String sellerId;
 
-    public Long getOrderId() {
+    private List<TbOrderItem> orderItemList;
+
+    public List<TbOrderItem> getOrderItemList() {
+        return orderItemList;
+    }
+
+    public void setOrderItemList(List<TbOrderItem> orderItemList) {
+        this.orderItemList = orderItemList;
+    }
+
+
+    public String getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
 

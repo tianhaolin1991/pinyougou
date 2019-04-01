@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class TbOrderItem implements Serializable {
-    private Long id;
+    private String id;
 
     private Long itemId;
 
     private Long goodsId;
 
-    private Long orderId;
+    private String orderId;
 
     private String title;
 
@@ -24,11 +24,11 @@ public class TbOrderItem implements Serializable {
 
     private String sellerId;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -48,11 +48,11 @@ public class TbOrderItem implements Serializable {
         this.goodsId = goodsId;
     }
 
-    public Long getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
 

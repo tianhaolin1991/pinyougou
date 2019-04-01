@@ -3,6 +3,8 @@ package com.pinyougou.mapper;
 import com.pinyougou.pojo.TbOrderItem;
 import com.pinyougou.pojo.TbOrderItemExample;
 import java.util.List;
+
+import com.pinyougou.pojogroup.OrderGroup;
 import org.apache.ibatis.annotations.Param;
 
 public interface TbOrderItemMapper {
@@ -27,4 +29,11 @@ public interface TbOrderItemMapper {
     int updateByPrimaryKeySelective(TbOrderItem record);
 
     int updateByPrimaryKey(TbOrderItem record);
+
+    /**
+     * 根据orderId查询OrderItemList
+     * @param orderId
+     * @return
+     */
+    List<TbOrderItem> findByOrderId(Long orderId);
 }

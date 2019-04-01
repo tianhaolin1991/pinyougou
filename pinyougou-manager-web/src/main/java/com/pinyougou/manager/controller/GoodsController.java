@@ -1,11 +1,13 @@
 package com.pinyougou.manager.controller;
-import java.util.Arrays;
 import java.util.List;
 
-import com.pinyougou.page.service.ItemPageService;
+import com.alibaba.fastjson.JSON;
 import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojogroup.GoodsGroup;
-import com.pinyougou.search.service.ItemSearchService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +17,10 @@ import com.pinyougou.sellergoods.service.GoodsService;
 
 import entity.PageResult;
 import entity.Result;
+
+import javax.jms.*;
+
+
 /**
  * controller
  * @author Administrator
@@ -27,11 +33,24 @@ public class GoodsController {
 	@Reference
 	private GoodsService goodsService;
 
-	@Reference
-	private ItemSearchService searchService;
+	@Autowired
+	private JmsTemplate jmsTemplate;
 
-	@Reference(timeout = 50000)
-	private ItemPageService pageService;
+	@Autowired
+    @Qualifier("importItemListDestination")
+	private Destination importItemListDestination;
+
+	@Autowired
+    @Qualifier("deleteItemListDestination")
+	private Destination deleteItemListDestination;
+
+	@Autowired
+    @Qualifier("genHtmlTopicDestination")
+    private Destination genHtmlTopicDestination;
+
+	@Autowired
+    @Qualifier("deleteHtmlTopicDestination")
+    private Destination deleteHtmlTopicDestination;
 	
 	/**
 	 * 返回全部列表
@@ -75,12 +94,11 @@ public class GoodsController {
 			goodsService.updateStatus(ids,status);
 			if("1".equals(status)){
 				List<TbItem> itemList = goodsService.findItemListByGoodsIdListAndStatus(ids, status);
-				searchService.importList(itemList);
 
+				//searchService.importList(itemList);
+                importListToSolr(itemList);
 				//生成页面
-				for (Long id : ids) {
-					genItemPage(id);
-				}
+				genItemPage(ids);
 			}
 			return new Result(true, "执行成功");
 		} catch (Exception e) {
@@ -108,7 +126,9 @@ public class GoodsController {
 	public Result delete(Long [] ids){
 		try {
 			goodsService.delete(ids);
-			searchService.deleteByGoodsIds(Arrays.asList(ids));
+			//searchService.deleteByGoodsIds(Arrays.asList(ids));
+            deleteByGoodsIdsFromSolr(ids);
+            deleteItemPage(ids);
 			return new Result(true, "删除成功"); 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -128,11 +148,47 @@ public class GoodsController {
 		return goodsService.findPage(goods, page, rows);		
 	}
 
-	@RequestMapping("/genHtml")
-	public String genItemPage(Long goodsId){
 
-		pageService.genItemPage(goodsId);
+	private void importListToSolr(List<TbItem> itemList){
 
-		return "";
-	}
+        String items= JSON.toJSONString(itemList);
+
+        jmsTemplate.send(importItemListDestination, new MessageCreator() {
+            @Override
+            public Message createMessage(Session session) throws JMSException {
+                return  session.createTextMessage(items);
+            }
+        });
+    }
+
+    private void deleteByGoodsIdsFromSolr(Long[] ids){
+        jmsTemplate.send(deleteItemListDestination, new MessageCreator() {
+            @Override
+            public Message createMessage(Session session) throws JMSException {
+                return session.createObjectMessage(ids);
+            }
+        });
+    }
+
+    private void genItemPage(Long[] goodsId){
+
+        jmsTemplate.send(genHtmlTopicDestination, new MessageCreator() {
+            @Override
+            public Message createMessage(Session session) throws JMSException {
+                return session.createObjectMessage(goodsId);
+            }
+        });
+
+    }
+
+    private void deleteItemPage(Long[] goodsId){
+
+        jmsTemplate.send(deleteHtmlTopicDestination, new MessageCreator() {
+            @Override
+            public Message createMessage(Session session) throws JMSException {
+                return session.createObjectMessage(goodsId);
+            }
+        });
+
+    }
 }

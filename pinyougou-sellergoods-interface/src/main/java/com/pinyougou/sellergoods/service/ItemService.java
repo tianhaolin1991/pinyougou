@@ -57,5 +57,11 @@ public interface ItemService {
 	 * @return
 	 */
 	public PageResult findPage(TbItem item, int pageNum, int pageSize);
+
+	/**
+	 * 测试用,无用
+	 * @return
+	 */
+	Integer updateResp();
 	
 }
