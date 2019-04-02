@@ -13,7 +13,18 @@
 	<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="multipartResolver">
 		<property name="maxInMemorySize" value="5242880"/>
 	</bean>
-	<mvc:annotation-driven>
+
+	<bean id="conversionService"
+		  class="org.springframework.context.support.ConversionServiceFactoryBean">
+		<property name="converters">
+			<set>
+				<!--将自定义的类型转换器加入转换器set集合中-->
+				<bean class="com.pinyougou.shop.converter.StringToDateConverter"/>
+			</set>
+		</property>
+	</bean>
+
+	<mvc:annotation-driven  conversion-service="conversionService">
 	  <mvc:message-converters register-defaults="true">
 	    <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">  
 	      <property name="supportedMediaTypes" value="application/json"/>
@@ -24,7 +35,7 @@
 	        </array>
 	      </property>
 	    </bean>
-	  </mvc:message-converters>  
+	  </mvc:message-converters>
 	</mvc:annotation-driven>
 
 	<mvc:default-servlet-handler/>

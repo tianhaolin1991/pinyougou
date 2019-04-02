@@ -146,4 +146,25 @@ public class UserController {
 		}
 	}
 
+
+	@RequestMapping("/setInfo")
+	public Result SetInfo(@RequestBody TbUser user){
+		try {
+			user.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+			userService.setInfo(user);
+			return new Result(true,"设置成功!");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result(false,"设置失败!");
+		}
+	}
+
+	@RequestMapping("/findByUsername")
+	public TbUser findByUsername(){
+
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			return userService.findByUsername(username);
+
+	}
+
 }

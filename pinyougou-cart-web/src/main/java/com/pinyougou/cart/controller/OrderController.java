@@ -53,6 +53,7 @@ public class OrderController {
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             order.setUserId(username);
             order.setSourceType("2");
+            order.setPaymentType("1");
             orderService.add(order);
 			return new Result(true, "增加成功");
 		} catch (Exception e) {
@@ -83,7 +84,7 @@ public class OrderController {
 	 * @return
 	 */
 	@RequestMapping("/findOne")
-	public TbOrder findOne(Long id){
+	public TbOrder findOne(String id){
 		return orderService.findOne(id);		
 	}
 	
@@ -93,7 +94,7 @@ public class OrderController {
 	 * @return
 	 */
 	@RequestMapping("/delete")
-	public Result delete(Long [] ids){
+	public Result delete(String [] ids){
 		try {
 			orderService.delete(ids);
 			return new Result(true, "删除成功"); 

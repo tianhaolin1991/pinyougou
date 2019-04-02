@@ -98,6 +98,14 @@
 <script type="text/javascript" src="js/plugins/sui/sui.min.js"></script>
 <script type="text/javascript" src="js/plugins/jquery-placeholder/jquery.placeholder.min.js"></script>
 <script type="text/javascript" src="js/pages/shoplogin.js"></script>
+<script>
+	 //回车提交事件
+	 $("body").bind('keydown', function(event) { 
+		if(event.keyCode==13){ 
+			$("#loginform").submit();
+		}   
+	}); 
+</script>
 </body>
 
 </html>

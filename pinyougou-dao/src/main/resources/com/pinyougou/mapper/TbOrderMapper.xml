@@ -559,10 +559,63 @@
 
   <select id="findOrderListByUserIdAndStatus" resultMap="orderMap">
     SELECT <include refid="Base_Column_List"/>
-    FROM tb_order WHERE user_id = #{id}
+    FROM tb_order WHERE user_id = #{userId}
     <if test="status!=null and status!='' ">
       and status = #{status}
     </if>
+    ORDER BY create_time desc
+  </select>
+
+  <select id="findOrderListBySellerIdAndStatus" resultMap="orderMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM tb_order WHERE seller_id = #{sellerId}
+    <if test="status!=null and status!='' ">
+      and status = #{status}
+    </if>
+    ORDER BY create_time desc
+  </select>
+
+
+  <resultMap id="orderExport" type="com.pinyougou.pojogroup.OrderExport">
+    <id property="orderId" column="order_id"/>
+    <result property="paymentType" column="payment_type"/>
+    <result property="status" column="status"/>
+    <result property="userId" column="user_id"/>
+    <result property="receiver" column="receiver"/>
+    <result property="receiverAreaName" column="receiver_area_name"/>
+    <result property="receiverMobile" column="receiver_mobile"/>
+    <result property="sourceType" column="source_type"/>
+    <result property="createTime" column="create_time"/>
+    <result property="title" column="title"/>
+    <result property="price" column="price"/>
+    <result property="num" column="num"/>
+    <result property="totalFee" column="total_fee"/>
+    <result property="brandName" column="brand_name"/>
+    <result property="category1Name" column="category1_name"/>
+    <result property="category2Name" column="category2_name"/>
+    <result property="category3Name" column="category3_name"/>
+  </resultMap>
+
+  <select id="findOrderExportByTimeAreaAndStatus" resultMap="orderExport">
+    <![CDATA[
+
+    SELECT o.order_id,o.payment_type,o.status,o.user_id,o.receiver,o.receiver_area_name,o.receiver_mobile,o.source_type,o.create_time,
+			oi.title,oi.price,oi.num,oi.total_fee,b.name AS brand_name,c1.name AS category1_name ,c2.name AS category2_name,c3.name AS category3_name
+    FROM tb_order o
+    JOIN tb_order_item oi ON o.order_id = oi.order_id
+    JOIN tb_goods g ON g.id = oi.goods_id
+    JOIN tb_brand b ON b.id = g.brand_id
+    JOIN tb_item_cat c1 ON c1.id = g.category1_id
+    JOIN tb_item_cat c2 ON c2.id = g.category2_id
+    JOIN tb_item_cat c3 ON c3.id = g.category3_id
+    WHERE o.seller_id = #{sellerId}
+          AND o.create_time >= #{startTime}
+          AND o.create_time <= #{endTime}
+    ]]>
+    <if test="status!=null and status!='' ">
+      AND o.status = #{status}
+    </if>
+
     ORDER BY create_time desc
   </select>
 </mapper>

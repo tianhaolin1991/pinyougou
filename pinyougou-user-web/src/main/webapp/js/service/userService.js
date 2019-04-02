@@ -7,4 +7,13 @@ app.service('userService', function ($http) {
     this.createCheckCode = function (phone) {
         return $http.get("../user/createCheckCode.do?phone=" + phone);
     }
+
+    this.setInfo = function(user){
+        return $http.post("../user/setInfo.do",user);
+    }
+
+    this.findByUsername = function(){
+        return $http.get("../user/findByUsername.do");
+    }
+
 })

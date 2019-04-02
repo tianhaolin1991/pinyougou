@@ -1,7 +1,9 @@
 package com.pinyougou.orders.service;
+import java.util.Date;
 import java.util.List;
 import com.pinyougou.pojo.TbOrder;
 
+import com.pinyougou.pojogroup.OrderExport;
 import entity.PageResult;
 /**
  * 服务层接口
@@ -95,4 +97,27 @@ public interface OrderService {
 	 * @param orderId
 	 */
 	void transactionCancel(String orderId);
+
+	/**
+	 * 根据商家ID查询orderList,分页
+	 * @param sellerId
+	 * @return
+	 */
+	PageResult findNotSendOrdersBySeller(String sellerId,Integer pageNum,Integer PageSize);
+
+	/**
+	 * 修改订单的状态为发货
+	 * @param orderId
+	 */
+	void sendGoods(String orderId);
+
+	/**
+	 * 根据sellerId,status,开始时间结束时间条件查询
+	 * @param sellerId
+	 * @param status
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	List<OrderExport> findOrderListByTimeAreaAndStatus(String sellerId, String status, Date startTime, Date endTime);
 }

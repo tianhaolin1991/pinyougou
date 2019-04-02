@@ -63,4 +63,17 @@ public interface UserService {
 	 * @return
 	 */
 	public void createCheckCode(String phone);
+
+	/**
+	 * 完善用户信息
+	 * @param user
+	 */
+    void setInfo(TbUser user);
+
+	/**
+	 * 根据username查找user
+	 * @param username
+	 * @return
+	 */
+	TbUser findByUsername(String username);
 }

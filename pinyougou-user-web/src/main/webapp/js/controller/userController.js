@@ -1,4 +1,4 @@
-app.controller('userController',function($scope,$controller,userService){
+app.controller('userController',function($scope,$controller,userService,areaService,uploadService){
 
     $controller('baseController',{$scope:$scope});
 
@@ -46,4 +46,75 @@ app.controller('userController',function($scope,$controller,userService){
         }
     }
 
+
+    //以下是修改个人信息网页使用的变量和js
+    $scope.findProvinceList = function(){
+        areaService.findProvinceList().success(
+            function(response){
+                $scope.provinceList = response;
+            }
+        )
+        $scope.findByUsername();
+    }
+    $scope.$watch('user',function(newValue,oldValue){
+        initSex($scope.user.sex);
+    })
+   
+
+    $scope.findByUsername = function(){
+        userService.findByUsername().success(
+            function(response){
+                $scope.user = response;
+                var birthday = new Date($scope.user.birthday);
+                $scope.year = birthday.getFullYear();
+                $scope.month = birthday.getMonth()+1;
+                $scope.date = birthday.getDate();
+            }
+        )
+    }
+
+
+    $scope.$watch('user.provinceId',function(newValue,oldValue){
+        areaService.findCityListByProvinceId(newValue).success(
+            function(response){
+                $scope.cityList=[];
+                $scope.areaList=[];
+                $scope.cityList = response;
+            }
+        )
+    })
+    $scope.$watch('user.cityId',function(newValue,oldValue){
+        areaService.findAreaListByCityId(newValue).success(
+            function(response){
+                $scope.areaList=[];
+                $scope.areaList = response;
+            }
+        )
+    })
+
+    $scope.setInfo = function(){
+       var birthDayStr = $scope.year+"/"+$scope.month+"/"+$scope.date
+       $scope.user.birthDay = new Date(birthDayStr);
+        userService.setInfo($scope.user).success(
+            function(response){
+                if(response.success){
+                    alert(response.message);
+                }else{
+                    alert(response.message);
+                }
+            }
+        )
+    }
+
+    $scope.uploadFile = function(){
+        uploadService.uploadFile().success(
+            function(response){
+                if(response.success){
+                    $scope.user.headPic = response.message;
+                }else{
+                    alert(response.message);
+                }
+            }
+        )
+    }
 })

@@ -9,6 +9,7 @@ import com.pinyougou.mapper.TbOrderItemMapper;
 import com.pinyougou.mapper.TbPayLogMapper;
 import com.pinyougou.pojo.*;
 import com.pinyougou.pojogroup.Cart;
+import com.pinyougou.pojogroup.OrderExport;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
@@ -305,6 +306,43 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus("3");
         orderMapper.updateByPrimaryKey(order);
     }
+
+    /**
+     * 根据商家id查询orderList
+     * @param sellerId
+     * @return
+     */
+    @Override
+    public PageResult findNotSendOrdersBySeller(String sellerId,Integer pageNum,Integer pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        Page page = (Page) orderMapper.findOrderListBySellerIdAndStatus(sellerId,"2");
+        return new PageResult(page.getTotal(),page.getResult());
+    }
+
+    /**
+     * 将订单的状态改为已发货
+     * @param orderId
+     */
+    @Override
+    public void sendGoods(String orderId) {
+        TbOrder order = orderMapper.selectByPrimaryKey(orderId);
+        order.setStatus("4");
+        orderMapper.updateByPrimaryKey(order);
+    }
+
+    /**
+     * 根据sellerId,status,startTime,endTime来查询
+     * @param sellerId
+     * @param status
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    @Override
+    public List<OrderExport> findOrderListByTimeAreaAndStatus(String sellerId, String status, Date startTime, Date endTime) {
+        return orderMapper.findOrderExportByTimeAreaAndStatus(sellerId,status,startTime,endTime);
+    }
+
 
 
 }
